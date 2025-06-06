@@ -1,3 +1,4 @@
+import 'package:appsettings_flutter/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,11 +10,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+        appBar: AppBar(
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.red,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Configuración'.toUpperCase(),
+                style: TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
         ),
+        body: SettingsScreen(),
       ),
     );
   }
