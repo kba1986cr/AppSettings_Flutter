@@ -1,4 +1,6 @@
+import 'package:appsettings_flutter/preferences_keys.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,6 +13,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _darkMode = false;
   String _language = "es";
   double _fontSize = 16;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  _loadPreferences() async {
+    final pref = await SharedPreferences.getInstance();
+    setState(() {
+      _darkMode = pref.getBool(PreferencesKeys.darkMode) ?? false;
+      _language = pref.getString(PreferencesKeys.language) ?? "es";
+      _fontSize = pref.getDouble(PreferencesKeys.fontSize) ?? 16;
+    });
+  }
+
+  _savePreferences(String key, dynamic value) async {
+    // Aquí puedes agregar la lógica para guardar las preferencias
+    final pref = await SharedPreferences.getInstance();
+    if (value is bool) {
+      await pref.setBool(key, value);
+    } else if (value is String) {
+      await pref.setString(key, value);
+    } else if (value is double) {
+      await pref.setDouble(key, value);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: _darkMode,
                 onChanged: (darkmode) {
                   setState(() => _darkMode = darkmode);
+                  _savePreferences(PreferencesKeys.darkMode, darkmode);
                 },
                 secondary: const Icon(Icons.dark_mode, color: Colors.blueGrey),
               ),
@@ -63,10 +93,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     //   setState(() => _language = language);
                     // }
                     setState(() => _language = language!);
+                    _savePreferences(PreferencesKeys.language, language);
                   },
                   decoration: InputDecoration(
                     labelText: 'Idioma',
                     border: OutlineInputBorder(),
+                    icon: Icon(Icons.language, color: Colors.blueGrey),
                   ),
                 ),
               ),
@@ -99,6 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   value: _fontSize,
                   onChanged: (fontSize) {
                     setState(() => _fontSize = fontSize);
+                    _savePreferences(PreferencesKeys.fontSize, fontSize);
                   },
                 ),
               ),
